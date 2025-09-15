@@ -1,0 +1,132 @@
+#include <iostream>
+using namespace std;
+
+class SimpleQueue {
+private:
+    int* queue; 
+    int size;   
+    int front;  
+    int rear;   
+
+public:
+
+    SimpleQueue(int s) {
+        size = s;
+        queue = new int[size];
+        front = 0;  
+        rear = -1;   
+    }
+
+    ~SimpleQueue() {
+        delete[] queue;
+    }
+
+    bool isEmpty() {
+        return rear < front;
+    }
+
+
+    bool isFull() {
+        return rear == size - 1;
+    }
+
+
+    void enqueue(int value) {
+        if (isFull()) {
+            cout << "Queue is Full. Cannot add element." << endl;
+            return;
+        }
+        rear++; 
+        queue[rear] = value; 
+        cout << "Enqueued " << value << " to the queue." << endl;
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            cout << "Queue is Empty. Cannot remove element." << endl;
+            return;
+        }
+        cout << "Dequeued " << queue[front] << " from the queue." << endl;
+        front++; 
+    }
+
+    void peek() {
+        if (isEmpty()) {
+            cout << "Queue is Empty." << endl;
+            return;
+        }
+        cout << "The front element is: " << queue[front] << endl;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            cout << "Queue is empty." << endl;
+            return;
+        }
+        cout << "Queue elements are: ";
+        for (int i = front; i <= rear; i++) {
+            cout << queue[i] << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    int size, choice, value;
+
+    cout << "Enter the size for the simple queue: ";
+    cin >> size;
+
+    SimpleQueue q(size);
+
+    while (true) {
+        cout << "\n--- SIMPLE QUEUE MENU ---" << endl;
+        cout << "1. Enqueue (Add)" << endl;
+        cout << "2. Dequeue (Remove)" << endl;
+        cout << "3. IsEmpty?" << endl;
+        cout << "4. IsFull?" << endl;
+        cout << "5. Peek (See Front)" << endl;
+        cout << "6. Display" << endl;
+        cout << "7. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter a value to add: ";
+                cin >> value;
+                q.enqueue(value);
+                break;
+            case 2:
+                q.dequeue();
+                break;
+            case 3:
+                if (q.isEmpty()) {
+                    cout << "The queue is empty." << endl;
+                } else {
+                    cout << "The queue is NOT empty." << endl;
+                }
+                break;
+            case 4:
+                if (q.isFull()) {
+                    cout << "The queue is full." << endl;
+                } else {
+                    cout << "The queue is NOT full." << endl;
+                }
+                break;
+            case 5:
+                q.peek();
+                break;
+            case 6:
+                q.display();
+                break;
+            case 7:
+                cout << "Exiting program." << endl;
+                return 0; 
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    }
+
+    return 0;
+}

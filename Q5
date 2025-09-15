@@ -1,0 +1,138 @@
+#include <iostream>
+
+using namespace std;
+
+// A custom-built queue class for integers.
+class IntQueue {
+private:
+    int* queueArr;
+    int capacity;
+    int front;
+    int rear;
+    int currentSize;
+
+public:
+    IntQueue(int size) {
+        capacity = size;
+        queueArr = new int[capacity];
+        front = 0;
+        rear = -1;
+        currentSize = 0;
+    }
+
+    ~IntQueue() {
+        delete[] queueArr;
+    }
+
+    bool isEmpty() {
+        return currentSize == 0;
+    }
+
+    void enqueue(int value) {
+        if (currentSize == capacity) return;
+        rear = (rear + 1) % capacity;
+        queueArr[rear] = value;
+        currentSize++;
+    }
+
+    int dequeue() {
+        if (isEmpty()) return -1; // Return -1 on error
+        int value = queueArr[front];
+        front = (front + 1) % capacity;
+        currentSize--;
+        return value;
+    }
+    
+    int peek() {
+        if (isEmpty()) return -1; // Return -1 on error
+        return queueArr[front];
+    }
+    
+    int size() {
+        return currentSize;
+    }
+};
+
+
+// (a) Stack using Two custom IntQueues
+class StackWithTwoQueues {
+private:
+    IntQueue q1;
+    IntQueue q2;
+
+public:
+    StackWithTwoQueues(int capacity) : q1(capacity), q2(capacity) {}
+
+    void push(int x) {
+        q2.enqueue(x);
+        while (!q1.isEmpty()) {
+            q2.enqueue(q1.dequeue());
+        }
+        while(!q2.isEmpty()){
+            q1.enqueue(q2.dequeue());
+        }
+    }
+
+    int top() {
+        if (q1.isEmpty()) return -1;
+        return q1.peek();
+    }
+
+    void pop() {
+        if (q1.isEmpty()) return;
+        q1.dequeue();
+    }
+};
+
+// (b) Stack using One custom IntQueue
+class StackWithOneQueue {
+private:
+    IntQueue q;
+
+public:
+    StackWithOneQueue(int capacity) : q(capacity) {}
+
+    void push(int x) {
+        int s = q.size();
+        q.enqueue(x);
+        for (int i = 0; i < s; i++) {
+            q.enqueue(q.dequeue());
+        }
+    }
+
+    int top() {
+        if (q.isEmpty()) return -1;
+        return q.peek();
+    }
+
+    void pop() {
+        if (q.isEmpty()) return;
+        q.dequeue();
+    }
+};
+
+
+int main() {
+    cout << "--- Q5: Stack Implementations (No STL) ---" << endl;
+    int stackCapacity = 100;
+
+    cout << "\n(a) Testing Stack with Two Custom Queues:" << endl;
+    StackWithTwoQueues s2(stackCapacity);
+    s2.push(10);
+    s2.push(20);
+    s2.push(30);
+    cout << "Top is: " << s2.top() << endl; // 30
+    s2.pop();
+    cout << "Top is: " << s2.top() << endl; // 20
+
+    cout << "\n(b) Testing Stack with One Custom Queue:" << endl;
+    StackWithOneQueue s1(stackCapacity);
+    s1.push(10);
+    s1.push(20);
+    s1.push(30);
+    cout << "Top is: " << s1.top() << endl; // 30
+    s1.pop();
+    cout << "Top is: " << s1.top() << endl; // 20
+
+    return 0;
+}

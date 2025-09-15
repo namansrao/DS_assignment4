@@ -1,0 +1,100 @@
+#include <iostream>
+
+class SimpleQueue {
+private:
+    int* queueArr;
+    int capacity;
+    int front;
+    int rear;
+    int currentSize;
+
+public:
+    SimpleQueue(int size) {
+        capacity = size;
+        queueArr = new int[capacity];
+        front = 0;
+        rear = -1;
+        currentSize = 0;
+    }
+
+    ~SimpleQueue() {
+        delete[] queueArr;
+    }
+
+    bool isEmpty() {
+        return currentSize == 0;
+    }
+
+    bool isFull() {
+        return currentSize == capacity;
+    }
+
+    void enqueue(int value) {
+        if (isFull()) {
+            std::cout << "Error: Queue is full. Cannot enqueue " << value << std::endl;
+            return;
+        }
+        rear = (rear + 1) % capacity;
+        queueArr[rear] = value;
+        currentSize++;
+    }
+
+    int dequeue() {
+        if (isEmpty()) {
+            std::cout << "Error: Queue is empty. Cannot dequeue." << std::endl;
+            return -1;
+        }
+        int value = queueArr[front];
+        front = (front + 1) % capacity;
+        currentSize--;
+        return value;
+    }
+    
+    int size() {
+        return currentSize;
+    }
+};
+
+void interleaveQueue(SimpleQueue& q) {
+    int n = q.size();
+    if (n % 2 != 0) {
+        std::cout << "Queue must have an even number of elements to interleave." << std::endl;
+        return;
+    }
+
+    int halfSize = n / 2;
+
+    SimpleQueue tempQueue(halfSize);
+
+    for (int i = 0; i < halfSize; i++) {
+        tempQueue.enqueue(q.dequeue());
+    }
+
+    while (!tempQueue.isEmpty()) {
+        q.enqueue(tempQueue.dequeue());
+        q.enqueue(q.dequeue());
+    }
+}
+
+int main() {
+    SimpleQueue myQueue(10);
+    
+    myQueue.enqueue(4);
+    myQueue.enqueue(7);
+    myQueue.enqueue(11);
+    myQueue.enqueue(20);
+    myQueue.enqueue(5);
+    myQueue.enqueue(9);
+
+    std::cout << "Original queue: 4 7 11 20 5 9" << std::endl;
+    
+    interleaveQueue(myQueue);
+
+    std::cout << "Interleaved queue: ";
+    while (!myQueue.isEmpty()) {
+        std::cout << myQueue.dequeue() << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}

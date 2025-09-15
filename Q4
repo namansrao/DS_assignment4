@@ -1,0 +1,82 @@
+#include <iostream>
+
+using namespace std;
+
+
+class CharQueue {
+private:
+    char* queueArr;
+    int capacity;
+    int front;
+    int rear;
+    int currentSize;
+
+public:
+    CharQueue(int size) {
+        capacity = size;
+        queueArr = new char[capacity];
+        front = 0;
+        rear = -1;
+        currentSize = 0;
+    }
+
+    ~CharQueue() {
+        delete[] queueArr;
+    }
+
+    bool isEmpty() {
+        return currentSize == 0;
+    }
+
+    void enqueue(char value) {
+        if (currentSize == capacity) return;
+        rear = (rear + 1) % capacity;
+        queueArr[rear] = value;
+        currentSize++;
+    }
+
+    char dequeue() {
+        if (isEmpty()) return '\0'; 
+        char value = queueArr[front];
+        front = (front + 1) % capacity;
+        currentSize--;
+        return value;
+    }
+    
+    char peek() {
+        if (isEmpty()) return '\0'; 
+        return queueArr[front];
+    }
+};
+
+
+void findFirstNonRepeating() {
+
+    int freq[256] = {0}; 
+    CharQueue q(256); 
+    
+    char ch;
+    cout << "--- Q4: First Non-Repeating Character ---" << endl;
+    cout << "Enter characters (e.g., a a b c .) and end with '.':" << endl;
+
+    while (cin >> ch && ch != '.') {
+        q.enqueue(ch);
+        freq[ch]++;
+
+        while (!q.isEmpty() && freq[q.peek()] > 1) {
+            q.dequeue();
+        }
+
+        if (q.isEmpty()) {
+            cout << -1 << " ";
+        } else {
+            cout << q.peek() << " ";
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    findFirstNonRepeating();
+    return 0;
+}
